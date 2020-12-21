@@ -1,0 +1,52 @@
+name: Publish to NPM
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  NODE_VERSION: 14.15.1
+
+jobs:
+  publish_to_npm:
+    runs-on: ubuntu-latest
+    # Check if commit message contains specified string.
+    if: "contains(github.event.head_commit.message , 'publish a new version')"
+    steps:
+      - name: Use actions/checkout@master
+        uses: actions/checkout@master
+
+      - name: Use "actions/setup-node@master" with Node version ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@master
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies globally
+        run: |
+          npm i -g lerna
+          npm i -g npm-cli-login
+
+      - name: Bootstrap project
+        run: lerna bootstrap
+
+      - name: Build packages
+        run: lerna run build --stream
+
+      - name: Login to NPM
+        run: npm-cli-login -u ${{ secrets.NPM_USER }} -p ${{ secrets.NPM_PASS }} -e ${{ secrets.NPM_EMAIL }}
+
+      - name: Publish to NPM
+        run: lerna publish from-git --yes
+
+      - name: Generate a date
+        id: generate-date
+        run: echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+        shell: bash
+
+      - name: Cache dependencies
+        uses: actions/cache@master
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-${{ steps.generate-date.outputs.date }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.OS }}-npm-cache

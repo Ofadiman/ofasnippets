@@ -1,0 +1,53 @@
+name: CI and deploy to github pages
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  SKIP_PREFLIGHT_CHECK: true
+  NODE_VERSION: 12.19.0
+  WEBAPP_SCOPE: @ofadiman/webapp
+
+jobs:
+  ci_and_deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.1
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js v${{ env.NODE_VERSION }}
+        uses: actions/setup-node@master
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install lerna globally
+        run: npm i -g lerna
+
+      - name: Bootstrap project
+        run: lerna bootstrap
+
+      - name: Lint ${{ env.WEBAPP_SCOPE }}
+        run: lerna run lint:ci --scope=${{ env.WEBAPP_SCOPE }}
+        env:
+          CI: false
+
+      - name: Test ${{ env.WEBAPP_SCOPE }}
+        run: lerna run test --scope=${{ env.WEBAPP_SCOPE }}
+
+      - name: Build ${{ env.WEBAPP_SCOPE }}
+        run: lerna run build --scope=${{ env.WEBAPP_SCOPE }}
+        env:
+          CI: false
+
+      - name: Deploy to github pages
+        uses: JamesIves/github-pages-deploy-action@3.6.2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: packages/webapp/build
+          GIT_CONFIG_NAME: github-actions[bot]
+          GIT_CONFIG_EMAIL: github-actions[bot]@gmail.pl
