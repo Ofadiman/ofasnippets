@@ -1,3 +1,14 @@
 {
-  "extends": ["@ofadiman/eslint-config-base"]
+  "extends": ["@ofadiman/eslint-config-base"],
+  "overrides": [
+    {
+      "files": ["typescript/**"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/unified-signatures": "off",
+        "no-redeclare": "off",
+        "no-useless-constructor": "off"
+      }
+    }
+  ]
 }

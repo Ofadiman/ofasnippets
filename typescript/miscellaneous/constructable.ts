@@ -1,0 +1,3 @@
+interface Constructable {
+  new (): object
+}
