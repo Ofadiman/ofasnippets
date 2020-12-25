@@ -1,0 +1,60 @@
+version: '3.7'
+
+services:
+  express:
+    # Define application restart policy.
+    # `always` means that the container starts every time you write `docker-compose up ...` and it will restart automatically after crash.
+    restart: always
+    # Define custom env variables which will be available under the "process.env".
+    # Define env variables with `:` sign.
+    environment:
+      NODE_CUSTOM_ENV: qqWG9814GGDWD
+    # Define sources of env files.
+    env_file:
+      - .env
+      - .env.development
+    # Define image name.
+    image: @ofadiman/express
+    # Define container name.
+    container_name: express-container
+    build:
+      # Define where Dockerfile lives.
+      context: ./server
+      # Define which Dockerfile to use.
+      dockerfile: dev.Dockerfile
+    ports:
+      # Map port 3000 from Docker host to port 80 in the container.
+      - 3000:80
+    # Mount project directory on the host to directory inside the container. Allows you to modify the code on the fly, without having to rebuild the image.
+    volumes:
+      - ./server:/app/server
+      # That volume makes sure that "node_modules" folder inside container does not get overwritten by "node_modules" from our machine. Alternatively you can specify "node_modules" inside ".dockerignore" file
+      - /app/server/node_modules
+    # This allows you to use `database` string in your server code which refers to the database service ip address.
+    links:
+      - database
+    # Define a command that will be run after docker container starts.
+    command: npm run dev
+    # This service will start before the `server` service.
+    depends_on:
+      - database
+
+  react:
+    # Fix for react-scripts shutting down the server.
+    stdin_open: true
+    image: @ofadiman/react
+    # Define env variables with `=` sign.
+    environment:
+      # This variable is required for vm's when the hot-reload does not work.
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_PORT=${REACT_APP_PORT}
+    depends_on:
+      - server
+    command: npm run dev
+
+  # Database services do not require Dockerfile.
+  mongodb:
+    image: library/mongo:4.2.7-bionic
+    container_name: mongodb-container
+    ports:
+      - 27017:27017
