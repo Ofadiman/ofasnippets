@@ -1,13 +1,16 @@
 {
   "name": "ofasnippets",
-  "description": "Snippets for programming.",
   "version": "0.0.1",
   "author": {
     "email": "ofadiman@gmail.com",
     "name": "Szymon Jaworski",
     "url": "https://github.com/Ofadiman"
   },
-  "bugs": "https://github.com/Ofadiman/ofasnippets/issues",
+  "description": "Snippets for programming.",
+  "license": "MIT",
+  "scripts": {
+    "syncpack-format": "syncpack format"
+  },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
@@ -30,6 +33,7 @@
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   },
+  "bugs": "https://github.com/Ofadiman/ofasnippets/issues",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -41,9 +45,5 @@
   "keywords": [
     "snippets"
   ],
-  "license": "MIT",
-  "repository": "Ofadiman/snippets",
-  "scripts": {
-    "syncpack-format": "syncpack format"
-  }
+  "repository": "Ofadiman/snippets"
 }
