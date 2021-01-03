@@ -1,5 +1,5 @@
 link_bashrc:
-	ln -sf $(CURDIR)/.bashrc /home/$(USER)/.bashrc
+	ln -sf $(CURDIR)/files/.bashrc /home/$(USER)/.bashrc
 
 open_webstorm_dir:
 	xdg-open ~/.local/share/JetBrains/WebStorm*.3

@@ -23,12 +23,13 @@ services:
       # Define which Dockerfile to use.
       dockerfile: dev.Dockerfile
     ports:
-      # Map port 3000 from Docker host to port 80 in the container.
-      - 3000:80
-    # Mount project directory on the host to directory inside the container. Allows you to modify the code on the fly, without having to rebuild the image.
+      # Map port 3000 from Docker host (your pc) to port 4000 in the container.
+      - 3000:4000
+    # Mount project directory on the host (your pc) to directory inside the container. Allows you to modify the code on the fly, without having to rebuild the image.
     volumes:
       - ./server:/app/server
       # That volume makes sure that "node_modules" folder inside container does not get overwritten by "node_modules" from our machine. Alternatively you can specify "node_modules" inside ".dockerignore" file
+      # That also means that when you install a new dependency you have to manually rebuild the image because changes on `node_modules` won't be reflected.
       - /app/server/node_modules
     # This allows you to use `database` string in your server code which refers to the database service ip address.
     links:

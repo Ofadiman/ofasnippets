@@ -1,0 +1,32 @@
+# Require sudo permissions because docker demands that.
+sudo: required
+
+# This is an image that travis uses to preinstall languages and their environments.
+language: generic
+
+# Define services that will be preinstalled.
+services:
+  - docker
+
+# Define steps that will be executed before running any scripts.
+before_install:
+  # Tag image with `ofadiman/docker-react` to have access to it via tag instead of id.
+  - docker build -t ofadiman/docker-react -f Dockerfile.dev .
+
+# Define scripts that have to be executed during CI.
+script:
+  - docker run -e CI=true ofadiman/docker-react npm run test
+
+# Define deploy configuration to AWS elasticbeanstalk service. .
+deploy:
+  app: docker
+  bucket_name: elasticbeanstalk-us-east-1-923115559289
+  bucket_path: docker
+  env: docker-env
+  # Elasticbeanstalk is a service that supports production docker instances.
+  provider: elasticbeanstalk
+  region: us-east-1
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY

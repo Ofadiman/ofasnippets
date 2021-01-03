@@ -18,9 +18,12 @@ const excessInvoice = {
   wtf: 'should be here xd'
 }
 
-const worksAsExpected = formatInvoiceDetails(invoice)
+const worksWithRequiredProperties = formatInvoiceDetails(invoice)
+const worksWithExcessProperties = formatInvoiceDetails(excessInvoice)
 
-const worksLoL = formatInvoiceDetails(excessInvoice)
-
-// @ts-expect-error
-const doesNotWork = formatInvoiceDetails({ amount: 200, date: new Date(), wtf: 'should be here xd' })
+const doesNotWorkBecauseExcessPropertyCheck = formatInvoiceDetails({
+  amount: 200,
+  date: new Date(),
+  // @ts-expect-error
+  excessPropertyCheck: 'excessPropertyCheck'
+})
